@@ -48,7 +48,7 @@ function Test() {
   // 创建一个控制器
   const controls = new OrbitControls(camera, renderer.domElement);
 
-// 启用控制器的鼠标事件
+  // 启用控制器的鼠标事件
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
   controls.screenSpacePanning = false;
