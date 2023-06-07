@@ -11,6 +11,7 @@
   "dependencies": {
     "normalize.css": "^8.0.1",
     "preact": "^10.13.2",
+    "react-div-100vh": "^0.7.0",
     "three": "^0.153.0"
   },
   "devDependencies": {

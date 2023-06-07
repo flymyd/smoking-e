@@ -4,6 +4,7 @@ import Button from "./Button.jsx";
 import * as THREE from "three";
 import {TGALoader} from "three/addons/loaders/TGALoader.js";
 import {smokeEffect} from "./SmokeEffect.js";
+import Div100vh from "react-div-100vh";
 
 export function App() {
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
@@ -60,20 +61,24 @@ export function App() {
             <span className="italic font-bold text-[#faed50] text-2xl">加载中{textureLoaded}%...</span>
           </div>
         }
-        <div className="fixed h-screen w-screen flex flex-col">
-          <div className="flex flex-row items-center h-10 bg-[#faed50]">
-            <span className="italic font-bold ml-4">CyberCiga</span>
-          </div>
-          <div className="w-full flex flex-row-reverse">
-            <div className="mr-4 mt-4 flex flex-col">
-              <Button text="取一根" onClick={drawOut}/>
-              <Button text="抽一口" onClick={lit}/>
-              {/*<Button text="帮助" isPlain onClick={() => ({})}/>*/}
+        <div className="fixed w-screen flex flex-col">
+          <Div100vh>
+            <div className="flex flex-row items-center h-10 bg-[#faed50]">
+              <span className="italic font-bold ml-4">CyberCiga</span>
             </div>
-          </div>
+            <div className="w-full flex flex-row-reverse">
+              <div className="mr-4 mt-4 flex flex-col">
+                <Button text="取一根" onClick={drawOut}/>
+                <Button text="抽一口" onClick={lit}/>
+                {/*<Button text="帮助" isPlain onClick={() => ({})}/>*/}
+              </div>
+            </div>
+          </Div100vh>
         </div>
-        <Stage style={{width: '100vw', height: '100vh', overflow: 'hidden'}} ref={stageRef} backgroundColor={0x16586A}
-               loaded={setTextureLoaded} modelList={setModelList}/>
+        <Div100vh>
+          <Stage style={{width: '100vw', height: '100%', overflow: 'hidden'}} ref={stageRef} backgroundColor={0x16586A}
+                 loaded={setTextureLoaded} modelList={setModelList}/>
+        </Div100vh>
       </div>
     </>
   )
