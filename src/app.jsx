@@ -57,7 +57,7 @@ export function App() {
         {
           textureLoaded !== 100 && <div
             className="cover fixed h-[80vh] w-screen mt-10 bg-[#16586A] z-50 flex flex-row items-center justify-center">
-            <span className="italic font-bold text-[#faed50] text-2xl">材质加载中...</span>
+            <span className="italic font-bold text-[#faed50] text-2xl">加载中{textureLoaded}%...</span>
           </div>
         }
         <div className="fixed h-screen w-screen flex flex-col">
