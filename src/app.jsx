@@ -2,12 +2,11 @@ import {useEffect, useRef, useState} from "preact/hooks";
 import Stage from "./Stage.jsx";
 import Button from "./Button.jsx";
 import * as THREE from "three";
-import {TGALoader} from "three/addons/loaders/TGALoader.js";
 import {smokeEffect} from "./SmokeEffect.js";
 import Div100vh from "react-div-100vh";
+import {isIOS, sleep} from "./utils/util.js";
 
 export function App() {
-  const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
   const stageRef = useRef(null)
   const [modelList, setModelList] = useState([])
   const [isDraw, setIsDraw] = useState(false)
@@ -27,7 +26,11 @@ export function App() {
       model.position.y += 15;
       await sleep(1000)
       model.rotation.set(Math.PI * 0.1, 0, 0)
-      model.position.set(0, -122, 1)
+      if(isIOS()){
+        model.position.set(0, -90, 1)
+      }else {
+        model.position.set(0, -122, 1)
+      }
       setIsBurn(true)
     }
   }
