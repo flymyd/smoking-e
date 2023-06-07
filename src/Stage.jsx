@@ -39,24 +39,17 @@ const Stage = forwardRef((props, ref) => {
     }
     // 创建模型
     const fbxLoader = new FBXLoader();
-    const tgaLoader = new TGALoader();
-    let fbxPath, tgaPath;
-    switch (type) {
-      case 0:
-        fbxPath = '/cigarette/Cigarette_Box.fbx';
-        tgaPath = '/cigarette/Cigarette.tga';
-        break;
-      case 1:
-        fbxPath = '/cigarette/Cigarette.fbx';
-        tgaPath = '/cigarette/Cigarette.tga';
-        break;
-      case 2:
-        fbxPath = '/cigarette/Cigarette.fbx';
-        tgaPath = '/cigarette/Cigarette_Lit.tga';
-        break;
+    const tgaLoader = new TGALoader()
+    let fbxPath = '/cigarette/Cigarette.fbx';
+    if (!type) {
+      fbxPath = '/cigarette/Cigarette_Box.fbx';
     }
     fbxLoader.load(fbxPath, (fbx) => {
-      const texture = tgaLoader.load(tgaPath);
+      const texture = tgaLoader.load('/cigarette/Cigarette_Lit.tga', (e) => {
+        // console.log(e)
+      }, (e) => {
+        props.loaded(parseInt((e.loaded / e.total) * 100))
+      });
       const material = new THREE.MeshBasicMaterial({map: texture});
       fbx.traverse((child) => {
         if (child.isMesh) {

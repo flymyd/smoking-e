@@ -11,6 +11,7 @@ export function App() {
   const [modelList, setModelList] = useState([])
   const [isDraw, setIsDraw] = useState(false)
   const [isBurn, setIsBurn] = useState(false)
+  const [textureLoaded, setTextureLoaded] = useState(0)
   let smokeTexture;
   useEffect(() => {
     // 加载纹理图
@@ -33,18 +34,18 @@ export function App() {
     if (isDraw && isBurn) {
       const modelObj = modelList.slice(-1)[0]
       const {model, type} = modelObj;
-      if (type !== 2) {
-        const tgaLoader = new TGALoader();
-        const tgaPath = '/cigarette/Cigarette_Lit.tga';
-        const texture = tgaLoader.load(tgaPath);
-        const material = new THREE.MeshBasicMaterial({map: texture});
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.material = material;
-            modelObj.type = 2;
-          }
-        });
-      }
+      // if (type !== 2) {
+      //   const tgaLoader = new TGALoader();
+      //   const tgaPath = '/cigarette/Cigarette_Lit.tga';
+      //   const texture = tgaLoader.load(tgaPath);
+      //   const material = new THREE.MeshBasicMaterial({map: texture});
+      //   model.traverse((child) => {
+      //     if (child.isMesh) {
+      //       child.material = material;
+      //       modelObj.type = 2;
+      //     }
+      //   });
+      // }
       const scene = stageRef.current.getScene();
       smokeEffect(scene, smokeTexture)
     }
@@ -53,6 +54,12 @@ export function App() {
   return (
     <>
       <div className="bg-[#16586A]">
+        {
+          textureLoaded !== 100 && <div
+            className="cover fixed h-[80vh] w-screen mt-10 bg-[#16586A] z-50 flex flex-row items-center justify-center">
+            <span className="italic font-bold text-[#faed50] text-2xl">材质加载中...</span>
+          </div>
+        }
         <div className="fixed h-screen w-screen flex flex-col">
           <div className="flex flex-row items-center h-10 bg-[#faed50]">
             <span className="italic font-bold ml-4">CyberCiga</span>
@@ -66,7 +73,7 @@ export function App() {
           </div>
         </div>
         <Stage style={{width: '100vw', height: '100vh', overflow: 'hidden'}} ref={stageRef} backgroundColor={0x16586A}
-               modelList={setModelList}/>
+               loaded={setTextureLoaded} modelList={setModelList}/>
       </div>
     </>
   )
