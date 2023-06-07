@@ -17,7 +17,8 @@ const Stage = forwardRef((props, ref) => {
   // 计时器ID
   let animationIdList = []
   // 组件宽高
-  let width, height
+  let width, height;
+  const [canvasSize, setCanvasSize] = useState({})
   /**
    * 在场景中新增一个模型
    * @param type 0 烟盒 1 烟杆 2 点燃的烟杆
@@ -67,6 +68,9 @@ const Stage = forwardRef((props, ref) => {
         modelAdjustor(model)
       }
       scene.add(model);
+      if (type) {
+        props.modelList(state => [...state, {model, type}])
+      }
       // 拖动逻辑
       if (canDrag) {
         let orbitControls = new OrbitControls(camera, renderer.domElement);
@@ -108,33 +112,42 @@ const Stage = forwardRef((props, ref) => {
   }
   const getPublicCamera = () => publicCamera;
   const getPublicLight = () => publicLight;
+  const getCanvasSize = () => canvasSize;
   useImperativeHandle(ref, () => ({
-    addModel, getPublicCamera, getPublicLight
+    addModel, getPublicCamera, getPublicLight, getCanvasSize
   }));
 
   useEffect(() => {
     width = mountRef.current.clientWidth;
     height = mountRef.current.clientHeight;
+    setCanvasSize({width, height})
     renderer = new THREE.WebGLRenderer({antialias: true});
-    // renderer.setClearColor(props.backgroundColor || 0xffffff);
+    renderer.setClearColor(props.backgroundColor || 0xffffff);
     renderer.setSize(width, height);
     mountRef.current.appendChild(renderer.domElement);
 
     // 初始化烟盒
     const {camera, light} = addModel(0, false, () => {
       let camera = (new THREE.PerspectiveCamera(45, width / height, 0.1, 1000))
-      camera.position.set(35, 0, 300);
+      camera.position.set(-30, 0, 300);
       // camera.position.x = 15; //移动端居中
       camera.lookAt(scene.position);
       return camera;
     }, model => {
+      model.position.set(-50, 40, 0)
       // 翻转到正面
       model.rotation.y = Math.PI + 0.3;
       // 倾斜一点
-      model.rotation.x = 0.8;
+      model.rotation.x = 0.2;
     })
     publicCamera = camera;
     publicLight = light;
+    for (let i = 0; i < 8; i++) {
+      addModel(1, false, () => publicCamera, model => {
+        model.rotation.x = Math.PI + 0.5;
+        model.position.set(-15 - i * 4, 90, 1)
+      }, () => publicLight)
+    }
     // 在组件卸载时清除渲染器和场景
     return () => {
       animationIdList.forEach(id => cancelAnimationFrame(id))
