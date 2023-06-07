@@ -3,29 +3,34 @@ import Stage from "./Stage.jsx";
 import Button from "./Button.jsx";
 import * as THREE from "three";
 import {TGALoader} from "three/addons/loaders/TGALoader.js";
-import constNode from "three/addons/nodes/core/ConstNode.js";
+import {smokeEffect} from "./SmokeEffect.js";
 
 export function App() {
-  function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-  }
-
+  const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
   const stageRef = useRef(null)
   const [modelList, setModelList] = useState([])
-  const [isLock, setIsLock] = useState(false)
+  const [isDraw, setIsDraw] = useState(false)
+  const [isBurn, setIsBurn] = useState(false)
+  let smokeTexture;
+  useEffect(() => {
+    // 加载纹理图
+    new THREE.TextureLoader().load("/clouds.png", function (texture) {
+      smokeTexture = texture;
+    })
+  })
   const drawOut = async () => {
-    // const size = stageRef.current.getCanvasSize();
-    if (modelList.length > 0 && !isLock) {
-      setIsLock(true)
+    if (modelList.length > 0 && !isDraw) {
+      setIsDraw(true)
       const model = modelList.slice(-1)[0].model
       model.position.y += 15;
       await sleep(1000)
       model.rotation.set(Math.PI * 0.1, 0, 0)
       model.position.set(0, -122, 1)
+      setIsBurn(true)
     }
   }
   const lit = () => {
-    if (isLock) {
+    if (isDraw && isBurn) {
       const modelObj = modelList.slice(-1)[0]
       const {model, type} = modelObj;
       if (type !== 2) {
@@ -40,8 +45,11 @@ export function App() {
           }
         });
       }
+      const scene = stageRef.current.getScene();
+      smokeEffect(scene, smokeTexture)
     }
   }
+
   return (
     <>
       <div className="bg-[#16586A]">
@@ -53,7 +61,7 @@ export function App() {
             <div className="mr-4 mt-4 flex flex-col">
               <Button text="取一根" onClick={drawOut}/>
               <Button text="抽一口" onClick={lit}/>
-              <Button text="帮助" isPlain onClick={lit}/>
+              {/*<Button text="帮助" isPlain onClick={() => ({})}/>*/}
             </div>
           </div>
         </div>

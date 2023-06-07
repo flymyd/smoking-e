@@ -33,7 +33,7 @@ const Stage = forwardRef((props, ref) => {
     if (cameraCreator) {
       camera = cameraCreator()
     } else {
-      camera = (new THREE.PerspectiveCamera(45, width / height, 0.1, 500))
+      camera = (new THREE.PerspectiveCamera(45, width / height, 0.1, 1000))
       camera.position.z = 300;
       camera.position.x = 35;
     }
@@ -113,8 +113,9 @@ const Stage = forwardRef((props, ref) => {
   const getPublicCamera = () => publicCamera;
   const getPublicLight = () => publicLight;
   const getCanvasSize = () => canvasSize;
+  const getScene = () => scene;
   useImperativeHandle(ref, () => ({
-    addModel, getPublicCamera, getPublicLight, getCanvasSize
+    addModel, getPublicCamera, getPublicLight, getCanvasSize, getScene
   }));
 
   useEffect(() => {
@@ -148,11 +149,19 @@ const Stage = forwardRef((props, ref) => {
         model.position.set(-15 - i * 4, 90, 1)
       }, () => publicLight)
     }
+    const onWindowResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    }
+    window.addEventListener('resize', onWindowResize)
     // 在组件卸载时清除渲染器和场景
     return () => {
+      window.removeEventListener('resize', onWindowResize)
       animationIdList.forEach(id => cancelAnimationFrame(id))
       renderer.dispose();
       scene.clear()
+      mountRef.current.removeChild(renderer.domElement)
     };
   }, []);
 
